@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <!-- Header Section -->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 style="font-family: 'Comic Sans MS';" class="display-4 fw-bolder">
+                    BILLING INFO</h1>
+                <p class="lead fw-normal text-white-50 mb-0">ENTER YOUR PAYMENT INFO...</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        Order Summary
+                    </div>
+                    <div class="card-body">
+                        {% for product in cart_products %}
+                            <p>{{ product.name }}:
+                                {% if product.is_sale %}
+                                    Rs{{ product.sale_price }}
+                                {% else %}
+                                    Rs{{ product.price }}
+                                {% endif %}
+                            </p>
+                            <p>Quantity: {{ quantities|get_item:product.id }}</p>
+                        {% endfor %}
+                        <strong>Total: Rs{{ total_price }}</strong>
+                        <br/><br/>
+                        <a href="{% url 'cart_summary' %}" class="btn btn-secondary">Update Item</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        Shipping Info
+                    </div>
+                    <div class="card-body">
+                        <p>Name: {{ shipping_info.shipping_full_name }}</p>
+                        <p>Email: {{ shipping_info.shipping_email }}</p>
+                        <p>Address1: {{ shipping_info.shipping_address1 }}</p>
+                        <p>Address2: {{ shipping_info.shipping_address2 }}</p>
+                        <p>City: {{ shipping_info.shipping_city }}</p>
+                        <p>State: {{ shipping_info.shipping_state }}</p>
+                        <p>Zip: {{ shipping_info.shipping_zip }}</p>
+                        <p>Country: {{ shipping_info.shipping_country }}</p>
+                        <br/>
+                        <a href="{% url 'checkout' %}" class="btn btn-secondary">Edit Shipping Info</a>
+                    </div>
+                </div>
+                <br/><br/>
+                <div class="card">
+                    <div class="card-header">
+                        Billing Info
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{% url 'process_order' %}">
+                            {% csrf_token %}
+                            {{ billing_form.as_p }}
+                            <button type="submit" class="btn btn-success">Proceed to Payment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Spacing -->
+    <div style="height: 200px;"></div> <!-- Adjust height as needed -->
+{% endblock %}
